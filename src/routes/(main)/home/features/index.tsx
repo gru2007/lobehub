@@ -5,6 +5,7 @@ import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useHomeStore } from '@/store/home';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/slices/auth/selectors';
 
@@ -18,6 +19,7 @@ import WelcomeText from './WelcomeText';
 const Home = memo(() => {
   const { i18n } = useTranslation();
   const isLogin = useUserStore(authSelectors.isLogin);
+  const { showMarket } = useServerConfigStore(featureFlagsSelectors);
   const inputActiveMode = useHomeStore((s) => s.inputActiveMode);
 
   // Hide other modules when a starter mode is active
@@ -38,7 +40,7 @@ const Home = memo(() => {
             <RecentPage />
           </>
         )}
-        <CommunityAgents />
+        {showMarket && <CommunityAgents />}
         {/*<FeaturedPlugins />*/}
         {isLogin && <RecentResource />}
       </Flexbox>

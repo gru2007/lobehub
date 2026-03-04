@@ -9,7 +9,7 @@ import { useAgentStore } from '@/store/agent';
 import { agentByIdSelectors } from '@/store/agent/selectors';
 import { useChatStore } from '@/store/chat';
 import { useHomeStore } from '@/store/home';
-import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { featureFlagsSelectors, serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 import CommunityRecommend from '../CommunityRecommend';
 import SuggestQuestions from '../SuggestQuestions';
@@ -23,6 +23,7 @@ const leftActions: ActionKeys[] = ['model', 'search', 'memory', 'fileUpload', 't
 const InputArea = () => {
   const { loading, send, inboxAgentId } = useSend();
   const inputActiveMode = useHomeStore((s) => s.inputActiveMode);
+  const { showMarket } = useServerConfigStore(featureFlagsSelectors);
   const isLobehubSkillEnabled = useServerConfigStore(serverConfigSelectors.enableLobehubSkill);
   const isKlavisEnabled = useServerConfigStore(serverConfigSelectors.enableKlavis);
   const showSkillBanner = isLobehubSkillEnabled || isKlavisEnabled;
@@ -135,7 +136,7 @@ const InputArea = () => {
           >
             <Flexbox gap={24}>
               <SuggestQuestions mode={inputActiveMode} />
-              <CommunityRecommend mode={inputActiveMode} />
+              {showMarket && <CommunityRecommend mode={inputActiveMode} />}
             </Flexbox>
           </motion.div>
         )}
