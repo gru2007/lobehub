@@ -34,7 +34,7 @@ const Agent = memo<AgentProps>(({ itemKey }) => {
       createAgentMenuItem(),
       createGroupChatMenuItem(),
       ...(ccItem ? [{ type: 'divider' as const }, ccItem] : []),
-    ];
+    ].filter(Boolean);
   }, [createAgentMenuItem, createClaudeCodeMenuItem, createGroupChatMenuItem]);
 
   const handleOpenConfigGroupModal = useCallback(() => {

@@ -20,6 +20,7 @@ import { useAgentStore } from '@/store/agent';
 import { useAgentGroupStore } from '@/store/agentGroup';
 import { useHomeStore } from '@/store/home';
 import { usePageStore } from '@/store/page';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { labPreferSelectors } from '@/store/user/selectors';
 
@@ -38,6 +39,7 @@ export const useCreateMenuItems = () => {
   const { t: tFile } = useTranslation('file');
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const { isAgentEditable } = useServerConfigStore(featureFlagsSelectors);
   const groupTemplates = useGroupTemplates();
   const enableHeterogeneousAgent = useUserStore(labPreferSelectors.enableHeterogeneousAgent);
 
@@ -234,22 +236,26 @@ export const useCreateMenuItems = () => {
    * Create agent menu item
    */
   const createAgentMenuItem = useCallback(
-    (options?: CreateAgentOptions): ItemType => ({
-      icon: <Icon icon={BotIcon} />,
-      key: 'newAgent',
-      label: t('newAgent'),
-      onClick: async (info) => {
-        info.domEvent?.stopPropagation();
-        if (options?.groupId) {
-          await createAgent(options);
-        } else if (openCreateModal) {
-          openCreateModal('agent');
-        } else {
-          await createAgent(options);
-        }
-      },
-    }),
-    [t, createAgent, openCreateModal],
+    (options?: CreateAgentOptions): ItemType | null => {
+      if (!isAgentEditable) return null;
+
+      return {
+        icon: <Icon icon={BotIcon} />,
+        key: 'newAgent',
+        label: t('newAgent'),
+        onClick: async (info) => {
+          info.domEvent?.stopPropagation();
+          if (options?.groupId) {
+            await createAgent(options);
+          } else if (openCreateModal) {
+            openCreateModal('agent');
+          } else {
+            await createAgent(options);
+          }
+        },
+      };
+    },
+    [t, createAgent, isAgentEditable, openCreateModal],
   );
 
   /**
@@ -257,7 +263,7 @@ export const useCreateMenuItems = () => {
    */
   const createClaudeCodeMenuItem = useCallback(
     (options?: CreateAgentOptions): ItemType | null => {
-      if (!isDesktop || !enableHeterogeneousAgent) return null;
+      if (!isAgentEditable || !isDesktop || !enableHeterogeneousAgent) return null;
       return {
         icon: <ClaudeCode size={'1em'} />,
         key: 'newClaudeCodeAgent',
@@ -268,7 +274,7 @@ export const useCreateMenuItems = () => {
         },
       };
     },
-    [t, createClaudeCodeAgent, enableHeterogeneousAgent],
+    [t, createClaudeCodeAgent, enableHeterogeneousAgent, isAgentEditable],
   );
 
   /**
@@ -276,22 +282,26 @@ export const useCreateMenuItems = () => {
    * Creates an empty group and navigates to its profile page
    */
   const createGroupChatMenuItem = useCallback(
-    (options?: CreateAgentOptions): ItemType => ({
-      icon: <Icon icon={GroupBotSquareIcon} />,
-      key: 'newGroupChat',
-      label: t('newGroupChat'),
-      onClick: async (info) => {
-        info.domEvent?.stopPropagation();
-        if (options?.groupId) {
-          await createEmptyGroup(options);
-        } else if (openCreateModal) {
-          openCreateModal('group');
-        } else {
-          await createEmptyGroup(options);
-        }
-      },
-    }),
-    [t, createEmptyGroup, openCreateModal],
+    (options?: CreateAgentOptions): ItemType | null => {
+      if (!isAgentEditable) return null;
+
+      return {
+        icon: <Icon icon={GroupBotSquareIcon} />,
+        key: 'newGroupChat',
+        label: t('newGroupChat'),
+        onClick: async (info) => {
+          info.domEvent?.stopPropagation();
+          if (options?.groupId) {
+            await createEmptyGroup(options);
+          } else if (openCreateModal) {
+            openCreateModal('group');
+          } else {
+            await createEmptyGroup(options);
+          }
+        },
+      };
+    },
+    [t, createEmptyGroup, isAgentEditable, openCreateModal],
   );
 
   /**
@@ -371,6 +381,7 @@ export const useCreateMenuItems = () => {
     createPage,
     createPageMenuItem,
     createSessionGroupMenuItem,
+    isAgentEditable,
     openCreateModal,
 
     // Loading states

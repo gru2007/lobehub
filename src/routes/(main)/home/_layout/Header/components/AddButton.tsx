@@ -18,6 +18,7 @@ const AddButton = memo(() => {
     createClaudeCodeMenuItem,
     createGroupChatMenuItem,
     createPageMenuItem,
+    isAgentEditable,
     openCreateModal,
     isMutatingAgent,
     isCreatingGroup,
@@ -27,9 +28,10 @@ const AddButton = memo(() => {
     (e: React.MouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
+      if (!isAgentEditable) return;
       openCreateModal?.('agent');
     },
-    [openCreateModal],
+    [isAgentEditable, openCreateModal],
   );
 
   const dropdownItems = useMemo(() => {
@@ -39,7 +41,7 @@ const AddButton = memo(() => {
       createGroupChatMenuItem(),
       createPageMenuItem(),
       ...(ccItem ? [{ type: 'divider' as const }, ccItem] : []),
-    ];
+    ].filter(Boolean);
   }, [createAgentMenuItem, createClaudeCodeMenuItem, createGroupChatMenuItem, createPageMenuItem]);
 
   return (

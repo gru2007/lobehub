@@ -13,13 +13,20 @@ import { useCreateMenuItems } from '../hooks';
 
 const NewAgentButton = memo(() => {
   const { t } = useTranslation('chat');
-  const { createAgentMenuItem, createGroupChatMenuItem, isMutatingAgent, openCreateModal } =
-    useCreateMenuItems();
+  const {
+    createAgentMenuItem,
+    createGroupChatMenuItem,
+    isAgentEditable,
+    isMutatingAgent,
+    openCreateModal,
+  } = useCreateMenuItems();
 
   const dropdownItems = useMemo(
-    () => [createAgentMenuItem(), createGroupChatMenuItem()],
+    () => [createAgentMenuItem(), createGroupChatMenuItem()].filter(Boolean),
     [createAgentMenuItem, createGroupChatMenuItem],
   );
+
+  if (!isAgentEditable) return null;
 
   return (
     <NavItem

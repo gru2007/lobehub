@@ -5,6 +5,7 @@ import StarterList from './StarterList';
 
 const mockState = vi.hoisted(() => ({
   inputActiveMode: null as 'agent' | 'group' | 'write' | 'image' | 'video' | 'research' | null,
+  isAgentEditable: true,
   showAiImage: true,
 }));
 
@@ -46,12 +47,17 @@ vi.mock('@/store/home', () => ({
 }));
 
 vi.mock('@/store/serverConfig', () => ({
-  featureFlagsSelectors: (state: { featureFlags: { showAiImage: boolean } }) => state.featureFlags,
+  featureFlagsSelectors: (state: {
+    featureFlags: { isAgentEditable: boolean; showAiImage: boolean };
+  }) => state.featureFlags,
   useServerConfigStore: <T,>(
-    selector: (state: { featureFlags: { showAiImage: boolean } }) => T,
+    selector: (state: {
+      featureFlags: { isAgentEditable: boolean; showAiImage: boolean };
+    }) => T,
   ) =>
     selector({
       featureFlags: {
+        isAgentEditable: mockState.isAgentEditable,
         showAiImage: mockState.showAiImage,
       },
     }),
@@ -60,7 +66,18 @@ vi.mock('@/store/serverConfig', () => ({
 describe('StarterList', () => {
   afterEach(() => {
     mockState.inputActiveMode = null;
+    mockState.isAgentEditable = true;
     mockState.showAiImage = true;
+  });
+
+  it('hides agent and group starters when agent editing is disabled', () => {
+    mockState.isAgentEditable = false;
+
+    render(<StarterList />);
+
+    expect(screen.queryByRole('button', { name: /Create Agent/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Create Group/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Write/i })).toBeInTheDocument();
   });
 
   it('shows the image starter when image generation is enabled', () => {

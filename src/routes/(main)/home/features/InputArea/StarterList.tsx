@@ -50,7 +50,7 @@ interface StarterItem {
 
 const StarterList = memo(() => {
   const { t } = useTranslation('home');
-  const { showAiImage } = useServerConfigStore(featureFlagsSelectors);
+  const { isAgentEditable, showAiImage } = useServerConfigStore(featureFlagsSelectors);
 
   useInitBuiltinAgent(BUILTIN_AGENT_SLUGS.agentBuilder);
   useInitBuiltinAgent(BUILTIN_AGENT_SLUGS.groupAgentBuilder);
@@ -63,42 +63,47 @@ const StarterList = memo(() => {
   ]);
 
   const items: StarterItem[] = useMemo(
-    // () => [
-    //   {
-    //     icon: BotIcon,
-    //     key: 'agent',
-    //     titleKey: 'starter.createAgent',
-    //   },
-    //   {
-    //     icon: GroupBotSquareIcon,
-    //     key: 'group',
-    //     titleKey: 'starter.createGroup',
-    //   },
-      {
-        icon: PenLineIcon,
-        key: 'write',
-        titleKey: 'starter.write',
-      },
-      {
-        hot: true,
-        icon: ImageIcon,
-        key: 'image',
-        titleKey: 'starter.imageGeneration',
-      },
-      // {
-      //   hot: true,
-      //   icon: Jimeng.Color,
-      //   key: 'video',
-      //   titleKey: 'starter.videoGeneration',
-      // },
-      // {
-      //   disabled: true,
-      //   icon: MicroscopeIcon,
-      //   key: 'research',
-      //   titleKey: 'starter.deepResearch',
-      // },
-    ].filter((item) => (item.key === 'image' ? showAiImage : true)),
-    [showAiImage],
+    () =>
+      [
+        ...(isAgentEditable
+          ? [
+              {
+                icon: BotIcon,
+                key: 'agent',
+                titleKey: 'starter.createAgent',
+              },
+              {
+                icon: GroupBotSquareIcon,
+                key: 'group',
+                titleKey: 'starter.createGroup',
+              },
+            ]
+          : []),
+        {
+          icon: PenLineIcon,
+          key: 'write',
+          titleKey: 'starter.write',
+        },
+        {
+          hot: true,
+          icon: ImageIcon,
+          key: 'image',
+          titleKey: 'starter.imageGeneration',
+        },
+        // {
+        //   hot: true,
+        //   icon: Jimeng.Color,
+        //   key: 'video',
+        //   titleKey: 'starter.videoGeneration',
+        // },
+        // {
+        //   disabled: true,
+        //   icon: MicroscopeIcon,
+        //   key: 'research',
+        //   titleKey: 'starter.deepResearch',
+        // },
+      ].filter((item) => (item.key === 'image' ? showAiImage : true)),
+    [isAgentEditable, showAiImage],
   );
 
   const handleClick = useCallback(
