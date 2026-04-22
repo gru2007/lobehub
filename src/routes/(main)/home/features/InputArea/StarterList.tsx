@@ -63,17 +63,17 @@ const StarterList = memo(() => {
   ]);
 
   const items: StarterItem[] = useMemo(
-    () => [
-      {
-        icon: BotIcon,
-        key: 'agent',
-        titleKey: 'starter.createAgent',
-      },
-      {
-        icon: GroupBotSquareIcon,
-        key: 'group',
-        titleKey: 'starter.createGroup',
-      },
+    // () => [
+    //   {
+    //     icon: BotIcon,
+    //     key: 'agent',
+    //     titleKey: 'starter.createAgent',
+    //   },
+    //   {
+    //     icon: GroupBotSquareIcon,
+    //     key: 'group',
+    //     titleKey: 'starter.createGroup',
+    //   },
       {
         icon: PenLineIcon,
         key: 'write',
@@ -85,12 +85,12 @@ const StarterList = memo(() => {
         key: 'image',
         titleKey: 'starter.imageGeneration',
       },
-      {
-        hot: true,
-        icon: Jimeng.Color,
-        key: 'video',
-        titleKey: 'starter.videoGeneration',
-      },
+      // {
+      //   hot: true,
+      //   icon: Jimeng.Color,
+      //   key: 'video',
+      //   titleKey: 'starter.videoGeneration',
+      // },
       // {
       //   disabled: true,
       //   icon: MicroscopeIcon,
