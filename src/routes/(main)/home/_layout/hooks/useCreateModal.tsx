@@ -12,6 +12,7 @@ import {
   DesktopChatInput,
 } from '@/features/ChatInput';
 import { useRandomQuestions } from '@/routes/(main)/home/features/SuggestQuestions/useRandomQuestions';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 const LEFT_ACTIONS: ActionKeys[] = ['model'];
 
@@ -53,9 +54,10 @@ interface ExamplesProps {
 const Examples = memo<ExamplesProps>(({ suggestMode, onExampleClick }) => {
   const { t: tCommon } = useTranslation('common');
   const { t: tSuggest } = useTranslation('suggestQuestions');
+  const { showWelcomeSuggest } = useServerConfigStore(featureFlagsSelectors);
   const { questions, refresh } = useRandomQuestions(suggestMode);
 
-  if (questions.length === 0) return null;
+  if (!showWelcomeSuggest || questions.length === 0) return null;
 
   return (
     <Flexbox gap={16}>

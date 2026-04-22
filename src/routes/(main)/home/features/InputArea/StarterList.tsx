@@ -12,6 +12,7 @@ import { useInitBuiltinAgent } from '@/hooks/useInitBuiltinAgent';
 import { useStableNavigate } from '@/hooks/useStableNavigate';
 import { type StarterMode } from '@/store/home';
 import { useHomeStore } from '@/store/home';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 const styles = createStaticStyles(({ css, cssVar }) => ({
   active: css`
@@ -49,6 +50,7 @@ interface StarterItem {
 
 const StarterList = memo(() => {
   const { t } = useTranslation('home');
+  const { showAiImage } = useServerConfigStore(featureFlagsSelectors);
 
   useInitBuiltinAgent(BUILTIN_AGENT_SLUGS.agentBuilder);
   useInitBuiltinAgent(BUILTIN_AGENT_SLUGS.groupAgentBuilder);
@@ -95,8 +97,8 @@ const StarterList = memo(() => {
       //   key: 'research',
       //   titleKey: 'starter.deepResearch',
       // },
-    ],
-    [],
+    ].filter((item) => (item.key === 'image' ? showAiImage : true)),
+    [showAiImage],
   );
 
   const handleClick = useCallback(

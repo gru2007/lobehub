@@ -41,6 +41,20 @@ vi.mock('@/features/Conversation', () => ({
     }),
 }));
 
+const useServerConfigStore = vi.fn((selector: (state: { featureFlags: { showWelcomeSuggest: boolean } }) => unknown) =>
+  selector({
+    featureFlags: {
+      showWelcomeSuggest: true,
+    },
+  }),
+);
+
+vi.mock('@/store/serverConfig', () => ({
+  featureFlagsSelectors: (state: { featureFlags: { showWelcomeSuggest: boolean } }) =>
+    state.featureFlags,
+  useServerConfigStore,
+}));
+
 describe('NameSuggestions', () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -68,5 +82,20 @@ describe('NameSuggestions', () => {
 
     expect(screen.getByText('Nova')).toBeInTheDocument();
     expect(screen.queryByText('Lumi')).not.toBeInTheDocument();
+  });
+
+  it('renders nothing when welcome suggestions are disabled', () => {
+    useServerConfigStore.mockImplementationOnce(
+      (selector: (state: { featureFlags: { showWelcomeSuggest: boolean } }) => unknown) =>
+        selector({
+          featureFlags: {
+            showWelcomeSuggest: false,
+          },
+        }),
+    );
+
+    const { container } = render(<NameSuggestions />);
+
+    expect(container).toBeEmptyDOMElement();
   });
 });

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useDiscoverStore } from '@/store/discover';
 import { type StarterMode } from '@/store/home';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { AssistantCategory } from '@/types/discover';
 
 import GroupBlock from '../components/GroupBlock';
@@ -24,6 +25,7 @@ interface CommunityRecommendProps {
 const CommunityRecommend = memo<CommunityRecommendProps>(({ mode }) => {
   const { t } = useTranslation('discover');
   const navigate = useNavigate();
+  const { showMarket } = useServerConfigStore(featureFlagsSelectors);
 
   const isGroupMode = mode === 'group';
 
@@ -41,7 +43,7 @@ const CommunityRecommend = memo<CommunityRecommendProps>(({ mode }) => {
   );
 
   // Don't render if mode is invalid
-  if (!mode || !['agent', 'group', 'write'].includes(mode)) {
+  if (!showMarket || !mode || !['agent', 'group', 'write'].includes(mode)) {
     return null;
   }
 

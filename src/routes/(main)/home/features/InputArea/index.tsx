@@ -11,7 +11,7 @@ import { useChatStore } from '@/store/chat';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { useHomeStore } from '@/store/home';
-import { serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
+import { featureFlagsSelectors, serverConfigSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 import CommunityRecommend from '../CommunityRecommend';
 import SuggestQuestions from '../SuggestQuestions';
@@ -25,6 +25,7 @@ const leftActions: ActionKeys[] = ['model', 'search', 'fileUpload', 'tools'];
 const InputArea = () => {
   const { loading, send, inboxAgentId } = useSend();
   const inputActiveMode = useHomeStore((s) => s.inputActiveMode);
+  const { showMarket, showWelcomeSuggest } = useServerConfigStore(featureFlagsSelectors);
   const isLobehubSkillEnabled = useServerConfigStore(serverConfigSelectors.enableLobehubSkill);
   const isKlavisEnabled = useServerConfigStore(serverConfigSelectors.enableKlavis);
   const isSkillBannerDismissed = useGlobalStore(
@@ -68,8 +69,11 @@ const InputArea = () => {
   );
 
   const hideStarterList = inputActiveMode && ['agent', 'group', 'write'].includes(inputActiveMode);
-  const showSuggestQuestions =
+  const isSuggestionMode =
     !inputActiveMode || ['agent', 'group', 'write'].includes(inputActiveMode);
+  const showSuggestQuestions = showWelcomeSuggest && isSuggestionMode;
+  const showCommunityRecommend =
+    !!inputActiveMode && ['agent', 'group', 'write'].includes(inputActiveMode) && showMarket;
 
   const extraActionItems = useMemo(
     () =>
@@ -130,7 +134,7 @@ const InputArea = () => {
         <StarterList />
       </div>
       <AnimatePresence mode="popLayout">
-        {showSuggestQuestions && (
+        {(showSuggestQuestions || showCommunityRecommend) && (
           <m.div
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 8 }}
@@ -143,8 +147,8 @@ const InputArea = () => {
             }}
           >
             <Flexbox gap={24}>
-              <SuggestQuestions mode={inputActiveMode} />
-              <CommunityRecommend mode={inputActiveMode} />
+              {showSuggestQuestions && <SuggestQuestions mode={inputActiveMode} />}
+              {showCommunityRecommend && <CommunityRecommend mode={inputActiveMode} />}
             </Flexbox>
           </m.div>
         )}

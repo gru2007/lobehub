@@ -7,6 +7,7 @@ import { memo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { type StarterMode } from '@/store/home';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 import GroupBlock from '../components/GroupBlock';
 import List from './List';
@@ -19,9 +20,10 @@ interface SuggestQuestionsProps {
 
 const SuggestQuestions = memo<SuggestQuestionsProps>(({ mode }) => {
   const { t } = useTranslation('common');
+  const { showWelcomeSuggest } = useServerConfigStore(featureFlagsSelectors);
   const { questions, refresh } = useRandomQuestions(mode);
 
-  if (mode && !['agent', 'group', 'write'].includes(mode)) {
+  if (!showWelcomeSuggest || (mode && !['agent', 'group', 'write'].includes(mode))) {
     return null;
   }
 

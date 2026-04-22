@@ -5,6 +5,7 @@ import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useConversationStore } from '@/features/Conversation';
+import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 interface SuggestionItem {
   emoji: string;
@@ -89,6 +90,7 @@ const getRandomGroupIndex = (currentIndex?: number) => {
 const NameSuggestions = memo(() => {
   const { t } = useTranslation('onboarding');
   const sendMessage = useConversationStore((s) => s.sendMessage);
+  const { showWelcomeSuggest } = useServerConfigStore(featureFlagsSelectors);
   const [groupIndex, setGroupIndex] = useState(() => getRandomGroupIndex());
 
   const handleRefresh = useCallback(() => {
@@ -101,6 +103,8 @@ const NameSuggestions = memo(() => {
     },
     [sendMessage],
   );
+
+  if (!showWelcomeSuggest) return null;
 
   return (
     <Flexbox gap={12}>
