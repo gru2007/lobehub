@@ -24,7 +24,8 @@ import { authSelectors } from '@/store/user/selectors';
 export const useCategory = (onOpenChangelogModal: () => void) => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common', 'setting', 'auth']);
-  const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
+  const { showChangelog, showCloudPromotion, hideDocs } =
+    useServerConfigStore(featureFlagsSelectors);
   const [isLoginWithAuth] = useUserStore((s) => [authSelectors.isLoginWithAuth(s)]);
   const { isIOS, isAndroid } = usePlatform();
   const businessMeCells = useBusinessMeCells();
@@ -87,7 +88,7 @@ export const useCategory = (onOpenChangelogModal: () => void) => {
       label: t('feedback'),
       onClick: () => window.open(FEEDBACK, '__blank'),
     },
-    {
+    showChangelog && {
       icon: FileClockIcon,
       key: 'changelog',
       label: t('changelog'),
