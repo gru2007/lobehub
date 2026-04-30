@@ -1,62 +1,44 @@
-import { SkillsIcon } from '@lobehub/ui/icons';
-import {
-  Brain,
-  BrainCircuit,
-  ChartColumnBigIcon,
-  Coins,
-  CreditCard,
-  Database,
-  EllipsisIcon,
-  Gift,
-  Info,
-  KeyIcon,
-  KeyRound,
-  Map,
-  PaletteIcon,
-  Sparkles,
-  UserCircle,
-} from 'lucide-react';
-import { useMemo } from 'react';
+import { Brain, BrainCircuit, Info, Settings2, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { type CellProps } from '@/components/Cell';
 import { SettingsTabs } from '@/store/global/initialState';
-import {
-  featureFlagsSelectors,
-  serverConfigSelectors,
-  useServerConfigStore,
-} from '@/store/serverConfig';
-import { useUserStore } from '@/store/user';
-import { userGeneralSettingsSelectors } from '@/store/user/slices/settings/selectors';
 
-export enum SettingsGroupKey {
-  Agent = 'agent',
-  General = 'general',
-  Subscription = 'subscription',
-  System = 'system',
-}
-
-export interface CategoryItem extends Omit<CellProps, 'type'> {
-  key: SettingsTabs;
-}
-
-export interface CategoryGroup {
-  items: CategoryItem[];
-  key: SettingsGroupKey;
-  title: string;
-}
-
-export const useCategory = (): CategoryGroup[] => {
+export const useCategory = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['setting', 'auth', 'subscription']);
   const { hideDocs, showApiKeyManage, showProvider } = useServerConfigStore(featureFlagsSelectors);
   const enableBusinessFeatures = useServerConfigStore(serverConfigSelectors.enableBusinessFeatures);
   const isDevMode = useUserStore((s) => userGeneralSettingsSelectors.config(s).isDevMode);
 
-  return useMemo(() => {
-    const navigateTo = (key: SettingsTabs) =>
-      navigate(key === SettingsTabs.Provider ? '/settings/provider/all' : `/settings/${key}`);
+  const items: CellProps[] = [
+    {
+      icon: Settings2,
+      key: SettingsTabs.Appearance,
+      label: t('tab.appearance'),
+    },
+    {
+      icon: Brain,
+      key: SettingsTabs.Provider,
+      label: t('tab.provider'),
+    },
+    {
+      icon: Sparkles,
+      key: SettingsTabs.ServiceModel,
+      label: t('tab.serviceModel'),
+    },
+    {
+      icon: BrainCircuit,
+      key: SettingsTabs.Memory,
+      label: t('tab.memory'),
+    },
+    {
+      icon: Info,
+      key: SettingsTabs.About,
+      label: t('tab.about'),
+    },
+  ].filter(Boolean) as CellProps[];
 
     const makeItem = (item: Omit<CategoryItem, 'onClick'>): CategoryItem => ({
       ...item,
