@@ -38,6 +38,7 @@ export const useNavLayout = (): NavLayout => {
   const toggleCommandMenu = useGlobalStore((s) => s.toggleCommandMenu);
   const { enableRAGEval, hideGitHub, showChangelog, showMarket } =
     useServerConfigStore(featureFlagsSelectors);
+  const { enableAgentTask } = useServerConfigStore(featureFlagsSelectors);
 
   const topNavItems = useMemo(
     () =>
@@ -55,13 +56,20 @@ export const useNavLayout = (): NavLayout => {
           url: '/',
         },
         {
+          hidden: !enableAgentTask,
+          icon: getRouteById('tasks')!.icon,
+          key: SidebarTabKey.Tasks,
+          title: t('tab.tasks'),
+          url: '/tasks',
+        },
+        {
           icon: getRouteById('page')!.icon,
           key: SidebarTabKey.Pages,
           title: t('tab.pages'),
           url: '/page',
         },
       ] as NavItem[],
-    [t, toggleCommandMenu],
+    [t, toggleCommandMenu, enableAgentTask],
   );
 
   const bottomMenuItems = useMemo(

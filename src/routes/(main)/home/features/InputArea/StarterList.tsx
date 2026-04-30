@@ -109,7 +109,7 @@ const StarterList = memo(() => {
   const handleClick = useCallback(
     (key: StarterMode) => {
       if (key === 'video') {
-        navigate('/video?model=doubao-seedance-2-0-260128');
+        navigate('/video?model=dreamina-seedance-2-0-260128');
         return;
       }
 

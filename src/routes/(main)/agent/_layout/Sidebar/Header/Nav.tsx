@@ -37,8 +37,10 @@ const Nav = memo(() => {
 
   const { mutate } = useActionSWR('openNewTopicOrSaveTopic', openNewTopicOrSaveTopic);
   const handleNewTopic = () => {
-    // If in agent sub-route, navigate back to agent chat first
-    if ((isProfileActive || isChannelActive) && agentId) {
+    // Always navigate to the bare agent chat URL — drops any sub-route
+    // (/profile, /channel, /page, /cron/:cronId, …) and any `:topicId`
+    // segment so the new topic isn't conflated with the previous URL.
+    if (agentId) {
       router.push(urlJoin('/agent', agentId));
     }
     mutate();
@@ -50,6 +52,13 @@ const Nav = memo(() => {
         icon={MessageSquarePlusIcon}
         title={tTopic('actions.addNewTopic')}
         onClick={handleNewTopic}
+      />
+      <NavItem
+        icon={SearchIcon}
+        title={t('tab.search')}
+        onClick={() => {
+          toggleCommandMenu(true);
+        }}
       />
       {!hideProfile && (
         <NavItem
@@ -73,13 +82,6 @@ const Nav = memo(() => {
           }}
         />
       )}
-      <NavItem
-        icon={SearchIcon}
-        title={t('tab.search')}
-        onClick={() => {
-          toggleCommandMenu(true);
-        }}
-      />
     </Flexbox>
   );
 });

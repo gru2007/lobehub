@@ -20,10 +20,12 @@ interface SuggestQuestionsProps {
 
 const SuggestQuestions = memo<SuggestQuestionsProps>(({ mode }) => {
   const { t } = useTranslation('common');
-  const { showWelcomeSuggest } = useServerConfigStore(featureFlagsSelectors);
+  const { showWelcomeSuggest, enableAgentTask } = useServerConfigStore(featureFlagsSelectors);
   const { questions, refresh } = useRandomQuestions(mode);
 
-  if (!showWelcomeSuggest || (mode && !['agent', 'group', 'write'].includes(mode))) {
+  if (!showWelcomeSuggest || enableAgentTask) return null;
+
+  if (mode && !['agent', 'group', 'write'].includes(mode)) {
     return null;
   }
 

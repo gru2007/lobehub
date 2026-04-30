@@ -27,6 +27,13 @@ export const mobileRoutes: RouteObject[] = [
               },
               {
                 element: dynamicElement(
+                  () => import('@/routes/(mobile)/chat'),
+                  'Mobile > Chat > Topic',
+                ),
+                path: ':topicId',
+              },
+              {
+                element: dynamicElement(
                   () => import('@/routes/(mobile)/chat/settings'),
                   'Mobile > Chat > Settings',
                 ),
@@ -216,6 +223,22 @@ export const mobileRoutes: RouteObject[] = [
         ),
         errorElement: <ErrorBoundary />,
         path: 'settings',
+      },
+
+      // Tasks routes (cross-agent)
+      {
+        children: [
+          {
+            element: dynamicElement(() => import('@/routes/(main)/tasks'), 'Mobile > Tasks'),
+            index: true,
+          },
+        ],
+        element: dynamicLayout(
+          () => import('@/routes/(main)/tasks/_layout'),
+          'Mobile > Tasks > Layout',
+        ),
+        errorElement: <ErrorBoundary resetPath="/" />,
+        path: 'tasks',
       },
 
       ...BusinessMobileRoutesWithMainLayout,
